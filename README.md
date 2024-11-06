@@ -1,4 +1,4 @@
-# 🇺🇸 Senators Data Presentation Web Application
+# 🇺🇸 Senators Data Presentation Webpage
 
 >A dynamic, interactive webpage built as part of my coursework for **COMP30680 - Web Application Development**. This project demonstrates my ability to create a webpage using HTML, CSS, and JavaScript to display and manipulate JSON data on US Senators without relying on external libraries.
 
