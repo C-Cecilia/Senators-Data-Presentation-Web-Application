@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<!--The code from this page is referencing from Easy Tutorials( https://www.youtube.com/watch?v=oYRda7UtuhA&t=0s)-->
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>SENATORTRACK</title>
+    <link rel=stylesheet type="text/css" href="cssfiles/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200;0,600;1,200;1,600&display=swap" rel="stylesheet">
+</head>
+    
+<body>
+        <header>
+            <div class= 'wrapper'>
+                <div class='logo'>
+                    <a href='#'>SenatorTrack</a>
+                </div>
+            </div>
+       </header>
+    
+<!--Number of sentor in each party-->
+<section>
+    <div class='header2'>
+    <br><br>
+    <h2>Total Number of senators in each party affiliation </h2>
+    <br>
+    </div>
+    <div class="party-display">
+        
+    <div class="row">
+        <div class="party-col">
+            <img src="pictures/de_icon.jpg" alt='Democrats'>
+            <div class="layer">
+                <span id='democratsnum'></span>
+            </div>
+        </div>
+        
+        <div class="party-col">
+            <img src="pictures/re_icon.jpg" alt='Republican'>
+            <div class="layer">
+                <span id='republicannum'></span>
+            </div>
+        </div>
+        
+        <div class="party-col">
+            <img src="pictures/independent.png" alt='Independent'>
+            <div class="layer">
+                <span id='independentnum'></span>
+            </div>
+        </div>
+    </div>
+<br>        
+<hr style="width:80%;text-align:left;margin:auto;">
+<br>
+</div>
+</section> 
+    
+<!--List of leadership-->
+ <section>
+
+    <div class='leader'>
+        <h2>Leaderships of Democrat & Republican</h2>
+        <br><br>
+        <p>Leader of Democrat:</p><br>
+        <div id='listdeleader'>List of Democar leadership roles</div>
+        <p>Leader of Republican:</p><br>
+        <div id="listreleader">List of Republican leadership roles</div>
+    </div>
+<br>        
+<hr style="width:80%;text-align:left;margin:auto;">
+<br>
+</section>
+    
+<!--Detail Table-->      
+<section> 
+    
+<div class="detailedtable">
+        <h2>US Senators</h2>
+    <br>
+    
+    <div class="selectors">
+        <h4>Party:</h4><div id='partyselected2'></div>
+        <h4>State:</h4><div id='stateselected2'></div>
+        <h4>Rank:</h4><div id='rankselected2'></div>
+      </div>
+        <button class='select_buttton' type='button' onclick='selectparameters()'>select</button>
+        <br><br>
+  
+                <div id='deatiltable'>Senators details</div>
+    <div class='popup' id='popup'>
+            <h3>Senator Details</h3>
+        <br>
+            <div id='detailsenator'></div>
+        <br>
+            <button id='okbtn' type='button' onclick='closePopup()'>Close</button>
+    </div>
+                <br><br><br>
+    </div>
+</section>   
+
+<!--Footer-->
+<footer class="footer">
+    <h4>copyright @ YalunChen & Chenwei Xie 2022</h4>
+</footer>
+    
+<script>
+var parsedSenators;
+var senator;
+// This XMLHttpRequest is used to parse info from the json file. 
+var xmlhttp = new XMLHttpRequest();
+var url = "senators.json";   
+var detailArray;
+var filter_data = "";
+    
+xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        
+        //Parse the JSON data to a JavaScript variable. 
+        var parsedSenators = JSON.parse(xmlhttp.responseText);  
+            detailArray = parsedSenators.objects;
+        // This function is defined below and deals with the JSON data read from the file. 
+            getobjofobj(parsedSenators);
+            partytotalnum(detailArray);
+    }
+};
+
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+
+// This function is used to get the object out from the parsed Json data and stored in a array named senator
+function getobjofobj(obj){
+    senator = obj.objects;
+    listofleader(senator);
+    detailInfo(senator);
+    tablefilter(senator);
+}
+    
+//This fuction is used to read the counting the total number of different party
+function partytotalnum(parsedSenators){
+    
+    var democratcunt = 0;
+    var republicancunt = 0;
+    var independentcunt= 0;
+    for(var i=0; i<senator.length; i++){
+        if(parsedSenators[i].party=="Democrat"){democratcunt = democratcunt+1;}
+        if(parsedSenators[i].party=="Republican"){republicancunt = republicancunt+1;}
+        if(parsedSenators[i].party=="Independent"){independentcunt = independentcunt+1;}
+    }
+    document.getElementById("democratsnum").innerHTML="<p>"+democratcunt+"</p>";
+    document.getElementById("republicannum").innerHTML="<p>"+republicancunt+"</P>";
+    document.getElementById("independentnum").innerHTML="<p>"+independentcunt+"</p>";
+    
+}
+    
+//This function is used to list out the leaders of each party
+function listofleader(senator){
+    var Deleader = "";
+    var Releader = "";
+    for (var i = 0; i < senator.length; i++){
+        if(senator[i].leadership_title !=null && senator[i].party=="Democrat"){
+            var Detitle = senator[i].leadership_title;
+            var Dename = senator[i].person.firstname +" " +senator[i].person.lastname;
+            var Departy = senator[i].party;
+            Deleader += "<li>"+Detitle+": "+ Dename+" ("+Departy+")</li><br>";
+        }
+        if(senator[i].leadership_title !=null && senator[i].party=="Republican"){
+            var Retitle = senator[i].leadership_title;
+            var Rename = senator[i].person.firstname +" " +senator[i].person.lastname;
+            var Reparty = senator[i].party;
+            Releader += "<li>"+Retitle+": "+ Rename+" ("+Reparty+")</li><br>";
+        }
+        
+    }
+    document.getElementById("listdeleader").innerHTML = Deleader;
+    document.getElementById("listreleader").innerHTML = Releader;
+    
+}
+    
+// This function is used to read the data stored from the senators json file and display it in a table. 
+function detailInfo(senator) {
+    var contact_out = "<table>";
+    contact_out += "<tr><th>Name</th>"
+    +"<th>Party</th>"
+    +"<th>State</th>"
+    +"<th>Gender</th>"
+    +"<th>Rank</th>"
+    +"<th>Details</tr>";    
+    // Then iterate through the array and populate table rows and columns 
+    for (var i=0; i <senator.length; i++) {
+        //var currobject = i;
+        var firstname = senator[i].person.firstname;
+        var lastname = senator[i].person.lastname;
+        var middlename = senator[i].person.middlename;
+        var party = senator[i].party;
+        var state = senator[i].state;
+//        console.log(state);
+        var gender = senator[i].person.gender;
+        var rank = senator[i].senator_rank;
+        
+        contact_out += "<tr><td>" +
+        firstname+" "+middlename+" " +lastname +
+        "</td><td>" +
+        party+
+        "</td><td>" +
+        state +
+        "</td><td>" +
+        gender +
+        "</td><td>" +
+        rank +
+        "</td><td>"+
+        "<button type='button' class='smallbutton' onclick='detailedInfoDisplay("+i+"), openPopup();'>Details</button>"+
+        "</td></tr>";
+       
+    }
+    
+    // Close the table element.
+    contact_out += "</table>";    
+    document.getElementById("deatiltable").innerHTML = contact_out;
+    
+}
+    
+//This fuction is used to filter the table of us senator
+    function tablefilter(senator){
+        //filter paraty      
+        var p_select ="<form><select id='partyselected'>";
+        var allparty =['Show All'];
+        for(var i=0; i<senator.length; i++){
+            var party = senator[i].party;
+            if(!allparty.includes(party)){ 
+                allparty.push(party);
+            }
+        }
+//        console.log(allparty);
+        for(var i=0; i<allparty.length; i++){
+            var eachparty = allparty[i];
+            p_select += "<option value='"+eachparty+"'>"+ eachparty+"</option>";
+        }
+        p_select +="</select></form>";
+        
+        document.getElementById('partyselected2').innerHTML=p_select;
+        
+        //filter state
+        var s_select ="<form><select id='stateselected'>";
+        var allstate =['Show All'];
+        for(var i = 0; i<senator.length; i++){
+            var state = senator[i].state;
+            if(!allstate.includes(state)){ 
+                allstate.push(state);
+            }
+        }
+        for(var i=0; i<allstate.length; i++){
+            var eachstate = allstate[i];
+            s_select += "<option value='"+eachstate+"'>"+ eachstate+"</option>";
+        }
+        s_select +="</select></form>";
+        
+        document.getElementById('stateselected2').innerHTML=s_select;
+    
+    //filter rank
+        var r_select ="<form><select id='rankselected'>";
+        var allrank =['Show All'];
+        for(var i=0; i<senator.length; i++){
+            var rank = senator[i].senator_rank;
+            if(!allrank.includes(rank)){ 
+                allrank.push(rank);
+            }
+        }
+        for(var i=0; i<allrank.length; i++){
+            var eachrank = allrank[i];
+            r_select += "<option value='"+eachrank+"'>"+ eachrank+"</option>";
+        }
+        r_select +="</select></form>";
+        
+        document.getElementById('rankselected2').innerHTML=r_select;
+    }
+    
+
+ // This fuctuion is used for get the selected parameters
+    function selectparameters(){ 
+        
+        var partypara = document.getElementById('partyselected').value;
+        var statepara = document.getElementById('stateselected').value;
+//        console.log(statepara);
+        var rankpara = document.getElementById('rankselected').value;
+        tablefilter_display(senator, partypara, statepara, rankpara);
+    }
+    
+// This function is used for display info of selected parameters
+    function tablefilter_display(senator, partypara, statepara, rankpara){
+//        console.log(partypara);
+        var contact_out3 = "<table>";
+        contact_out3 += "<tr><th>Name</th>"
+        +"<th>Party</th>"
+        +"<th>State</th>"
+        +"<th>Gender</th>"
+        +"<th>Rank</th>"
+        +"<th>Details</tr>";    
+        var list_p = [];
+        var list_s = [];
+        var list_r = [];
+        var list_f = [];
+// This is used to match the filter information  
+    for (var i=0; i <senator.length; i++) {
+        if(partypara =="Show All" || partypara === senator[i].party){
+            list_p.push(senator[i])
+        }
+    }
+    
+    for (var i=0; i <list_p.length; i++) {
+        if(statepara == "Show All" || statepara=== list_p[i].state){
+            list_s.push(list_p[i])
+        }
+    }
+    
+    for (var i=0; i <list_s.length; i++) {
+        if(rankpara =="Show All" || rankpara === list_s[i].senator_rank){
+            list_r.push(list_s[i])
+        }
+    }
+        
+    // This is used for grouping the table by party
+        
+        list_f = list_r.sort(function(a,b){
+            var party1 = a.party;
+            var party2 = b.party;
+            if(party1 < party2){
+                return -1;
+            }
+            if (party1 >party2){
+                return 1;
+            }
+            return 0;
+    })
+
+        let u = 0;
+        for(; u< list_f.length; u++){
+//            console.log(u)
+            var firstname = list_f[u].person.firstname;
+            var lastname = list_f[u].person.lastname;
+            var middlename = list_f[u].person.middlename;
+            var party = list_f[u].party;
+            var state = list_f[u].state;
+//        console.log(state);
+            var gender = list_f[u].person.gender;
+            var rank = list_f[u].senator_rank;
+            
+                        contact_out3 += "<tr><td>" +
+                        firstname+" "+middlename+" " +lastname +
+                        "</td><td>" +
+                        party+
+                        "</td><td>" +
+                        state +
+                        "</td><td>" +
+                        gender +
+                        "</td><td>" +
+                        rank +
+                        "</td><td>"+
+                        "<button type='button' class='smallbutton' onclick='detailedInfoDisplay2("+u+"), openPopup();'>Details</button>"+
+                        "</td></tr>";
+        }
+        // This is used to handel the empty return for the filter
+        if (list_f.length === 0){
+           contact_out3 += "<tr><td colspan='6'>No infomation match the selection.</td></tr>";
+        }
+    // Close the table element.
+    contact_out3 += "</table>";    
+    document.getElementById("deatiltable").innerHTML = contact_out3;
+    filter_data  = list_f;
+     // console.log(filter_data);
+    }
+    
+
+//This function is used to get the details info of each senator before the filter
+    
+    function detailedInfoDisplay(clicked_btn) {
+        //console.log(clicked_btn);
+        
+        var contact_out2 = "<table>";
+        contact_out2 += "<tr><th>Name</th>"+
+        "<th>Office</th>"+
+        "<th>Date of Birth</th>"
+        +"<th>Startdate</th>"
+        +"<th>Twitter</th>"
+        +"<th>Youtube</th>"
+        +"<th>Website</tr>";
+        
+            var office = senator[clicked_btn].extra.office;
+            var DoB = senator[clicked_btn].person.birthday;
+            var startdate = senator[clicked_btn].startdate;
+            var twitter = senator[clicked_btn].person.twitterid;
+            var youtube = senator[clicked_btn].person.youtubeid;
+            var website = senator[clicked_btn].website;
+            var name = senator[clicked_btn].person.firstname +" "+ senator[clicked_btn].person.middlename+ " "+senator[clicked_btn].person.lastname;
+            
+            
+        contact_out2+= "<tr><td>" +
+        name+
+        "</td><td>" +
+        office+
+        "</td><td>" +
+        DoB+
+        "</td><td>" +
+        startdate +
+        "</td><td>" +
+        twitter +
+        "</td><td>" +
+        youtube +
+        "</td><td>"+
+        "<a href ='"+website+"' target='_blank' style='color:#fff;'>website</a>"
+        +"</td></tr>";
+        
+        contact_out2 += "</table>";
+        document.getElementById("detailsenator").innerHTML = contact_out2;
+    }
+    
+//This function is used to get the details info of each senator after the filter
+    function detailedInfoDisplay2(clicked_btn) {
+//        console.log(filter_data);
+        var contact_out4 = "<table>";
+        contact_out4 += "<tr><th>Name</th>"+
+        "<th>Office</th>"+
+        "<th>Date of Birth</th>"
+        +"<th>Startdate</th>"
+        +"<th>Twitter</th>"
+        +"<th>Youtube</th>"
+        +"<th>Website</tr>";
+        
+            var office = filter_data[clicked_btn].extra.office;
+            var DoB = filter_data[clicked_btn].person.birthday;
+            var startdate = filter_data[clicked_btn].startdate;
+            var twitter = filter_data[clicked_btn].person.twitterid;
+            var youtube = filter_data[clicked_btn].person.youtubeid;
+            var website = filter_data[clicked_btn].website;
+            var name = filter_data[clicked_btn].person.firstname +" "+ filter_data[clicked_btn].person.middlename+ " "+filter_data[clicked_btn].person.lastname;
+            
+        contact_out4+= "<tr><td>" +
+        name+
+        "</td><td>" +
+        office+
+        "</td><td>" +
+        DoB+
+        "</td><td>" +
+        startdate +
+        "</td><td>" +
+        twitter +
+        "</td><td>" +
+        youtube +
+        "</td><td>"+
+        "<a href ='"+website+"' target='_blank' style='color:#fff;'>website</a>"
+        +"</td></tr>";
+        
+        contact_out4 += "</table>";
+        document.getElementById("detailsenator").innerHTML = contact_out4;
+    }
+
+// The following two function are used for pop up the detail information
+let popup= document.getElementById('popup');
+    
+function openPopup(){
+    popup.classList.add('open-popup');
+}
+
+function closePopup(){
+    popup.classList.remove('open-popup');
+}    
+
+</script>
+
+    
+</body>    
+    
